@@ -670,6 +670,22 @@
 
         updateUI();
         requestAnimationFrame(gameLoop);
+
+        // Auto-refresh mechanism on mobile when reopening or when version changes
+        const CURRENT_APP_VERSION = "1.2.0";
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // If the user returns to the game on mobile, check for updates
+                fetch(window.location.pathname + '?check=' + Date.now(), { cache: 'no-store' })
+                    .then(res => res.text())
+                    .then(html => {
+                        const match = html.match(/CURRENT_APP_VERSION\s*=\s*"([^"]+)"/);
+                        if (match && match[1] && match[1] !== CURRENT_APP_VERSION) {
+                            window.location.reload();
+                        }
+                    }).catch(() => {});
+            }
+        });
     </script>
 </body>
 </html>
