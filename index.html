@@ -59,13 +59,35 @@
             background: radial-gradient(circle at center, #0d1733 0%, #030611 100%);
             z-index: 200;
             box-sizing: border-box;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 20px 20px 70px 20px;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
             text-align: center;
         }
         .shop-container {
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
+            padding-bottom: 50px;
+            touch-action: pan-y;
+        }
+        .shop-close-top {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 68, 68, 0.85);
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 210;
         }
         .btn {
             padding: 12px 24px;
@@ -181,6 +203,7 @@
 
     <!-- Shop Modal (Full Screen) -->
     <div id="shop-modal">
+        <div class="shop-close-top" onclick="closeShop()">✕</div>
         <div class="shop-container">
             <h2 style="font-size: 26px; margin: 10px 0; color: #00ffff; text-shadow: 0 0 10px #00ffff;">🛒 חנות החלל</h2>
             <div style="color: #ffd700; font-size: 20px; font-weight: bold; margin-bottom: 15px;">
@@ -672,7 +695,7 @@
         requestAnimationFrame(gameLoop);
 
         // Auto-refresh mechanism on mobile when reopening or when version changes
-        const CURRENT_APP_VERSION = "1.2.0";
+        const CURRENT_APP_VERSION = "1.3.0";
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 // If the user returns to the game on mobile, check for updates
