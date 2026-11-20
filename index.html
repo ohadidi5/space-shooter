@@ -96,13 +96,15 @@
         let isTouching = false;
         let lastShotTime = 0;
 
+        const controlBarHeight = 65;
+
         function resize() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
             if(player) {
-                player.y = height - 80;
+                player.y = height - controlBarHeight - player.height - 15;
             }
         }
         window.addEventListener('resize', resize);
@@ -110,10 +112,10 @@
 
         class Player {
             constructor() {
-                this.width = 60;
-                this.height = 60;
+                this.width = 50;
+                this.height = 50;
                 this.x = width / 2 - this.width / 2;
-                this.y = height - 80;
+                this.y = height - controlBarHeight - this.height - 15;
                 this.hp = 100;
             }
             draw() {
@@ -339,6 +341,52 @@
                 playerLasers.push(new Laser(player.x + player.width / 2, player.y, -12, 'player'));
                 lastShotTime = timestamp;
             }
+
+            // Draw Bottom Touch Control Bar
+            const barY = height - controlBarHeight;
+            // Background track
+            ctx.fillStyle = 'rgba(20, 25, 45, 0.85)';
+            ctx.fillRect(0, barY, width, controlBarHeight);
+
+            // Top border for the bar
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, barY);
+            ctx.lineTo(width, barY);
+            ctx.stroke();
+
+            // Center guide line
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(30, barY + controlBarHeight / 2);
+            ctx.lineTo(width - 30, barY + controlBarHeight / 2);
+            ctx.stroke();
+
+            // Slider handle indicator matching player's X position
+            const sliderX = player.x + player.width / 2;
+            const sliderY = barY + controlBarHeight / 2;
+            ctx.fillStyle = '#00ffff';
+            ctx.shadowColor = '#00ffff';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(sliderX, sliderY, 18, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0; // reset shadow
+
+            // Small inner dot for slider
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(sliderX, sliderY, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Label text on the bar
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.font = '13px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('◄  החלק כאן להזזה  ►', width / 2, barY + 18);
 
             player.draw();
 
