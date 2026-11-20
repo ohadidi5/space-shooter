@@ -277,11 +277,11 @@
 
         class Enemy {
             constructor(level, index, total) {
-                this.width = 50;
-                this.height = 50;
+                this.width = 45;
+                this.height = 45;
                 let spacing = width / (total + 1);
                 this.x = spacing * (index + 1) - this.width / 2;
-                this.y = 60 + (Math.random() * 60);
+                this.y = 48; // Right below the top UI bar at the top of the screen
                 this.hp = 100;
                 this.level = level;
                 this.speed = (Math.random() > 0.5 ? 1 : -1) * (1.5 + level * 0.3);
@@ -341,15 +341,15 @@
                 
                 // Draw HP bar
                 ctx.fillStyle = 'red';
-                ctx.fillRect(this.x, this.y - 15, this.width, 6);
+                ctx.fillRect(this.x, this.y - 8, this.width, 5);
                 ctx.fillStyle = '#00ff00';
-                ctx.fillRect(this.x, this.y - 15, this.width * (this.hp / 100), 6);
+                ctx.fillRect(this.x, this.y - 8, this.width * (this.hp / 100), 5);
                 
                 // Draw level text
-                ctx.fillStyle = 'white';
-                ctx.font = '14px Arial';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('רמה ' + this.level, this.x + this.width / 2, this.y - 20);
+                ctx.fillText('רמה ' + this.level, this.x + this.width / 2, this.y - 12);
             }
         }
 
