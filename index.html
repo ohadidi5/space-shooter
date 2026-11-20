@@ -31,25 +31,33 @@
             font-size: 20px;
             font-weight: bold;
         }
-        #gameover, #start-screen {
+        #gameover, #start-screen, #shop-modal {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 30px;
+            background: rgba(10, 15, 30, 0.95);
+            padding: 25px;
             border: 3px solid #00ffff;
             border-radius: 15px;
             z-index: 100;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+            max-width: 90vw;
+            box-sizing: border-box;
         }
-        #gameover {
+        #gameover, #shop-modal {
             display: none;
         }
-        button {
-            padding: 15px 30px;
-            font-size: 24px;
-            margin-top: 20px;
+        #shop-modal {
+            width: 360px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 20px;
+            margin: 8px 4px;
             pointer-events: auto;
             cursor: pointer;
             background-color: #00ffff;
@@ -57,6 +65,83 @@
             border: none;
             border-radius: 8px;
             font-weight: bold;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-shop {
+            background-color: #ffd700;
+            color: #000;
+        }
+        .btn-close {
+            background-color: #ff4444;
+            color: #fff;
+        }
+        .shop-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .tab-btn {
+            padding: 8px 14px;
+            font-size: 15px;
+            background: #1a223a;
+            color: #fff;
+            border: 1px solid #00ffff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tab-btn.active {
+            background: #00ffff;
+            color: #000;
+        }
+        .shop-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: right;
+            direction: rtl;
+        }
+        .shop-item h3 {
+            margin: 0 0 6px 0;
+            color: #00ffff;
+            font-size: 17px;
+        }
+        .shop-item p {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #ddd;
+            line-height: 1.4;
+        }
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price-tag {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .btn-buy {
+            padding: 6px 14px;
+            font-size: 14px;
+            background: #00ff88;
+            color: black;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-buy.owned {
+            background: #666;
+            color: #bbb;
+            cursor: default;
         }
     </style>
 </head>
@@ -68,13 +153,49 @@
     </div>
     <div id="start-screen">
         <h1>מלחמת חלל</h1>
-        <button onclick="startGameFromMenu()">התחל משחק</button>
+        <button class="btn" onclick="startGameFromMenu()">התחל משחק</button>
+        <br>
+        <button class="btn btn-shop" onclick="openShop('menu')">🛒 חנות</button>
     </div>
     <div id="gameover">
         <h1>המשחק נגמר!</h1>
         <p>הגעת לגל <span id="final-wave"></span></p>
-        <p>מטבעות שנאספו: <span id="final-coins"></span></p>
-        <button onclick="startGame()">שחק שוב</button>
+        <p>מטבעות: <span id="final-coins"></span> 🪙</p>
+        <button class="btn" onclick="startGame()">שחק שוב</button>
+        <br>
+        <button class="btn btn-shop" onclick="openShop('gameover')">🛒 חנות</button>
+    </div>
+
+    <!-- Shop Modal -->
+    <div id="shop-modal">
+        <h2>🛒 חנות החלל</h2>
+        <div style="color: #ffd700; font-size: 18px; margin-bottom: 10px;">
+            המטבעות שלך: <span id="shop-coins">0</span> 🪙
+        </div>
+        
+        <div class="shop-tabs">
+            <button class="tab-btn active" id="tab-skills-btn" onclick="switchShopTab('skills')">יכולות מיוחדות</button>
+            <button class="tab-btn" id="tab-powerups-btn" onclick="switchShopTab('powerups')">פאוור אפים</button>
+        </div>
+
+        <div id="tab-skills" class="tab-content">
+            <div class="shop-item">
+                <h3>⏳ האטת זמן</h3>
+                <p>מאיט את מהירות הלייזרים והירייות של חלליות האויב ב-20% באופן קבוע!</p>
+                <div class="item-footer">
+                    <span class="price-tag">100 🪙</span>
+                    <button id="buy-slowmo-btn" class="btn-buy" onclick="buyTimeSlow()">קנה</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-powerups" class="tab-content" style="display: none;">
+            <div class="shop-item" style="text-align: center; color: #aaa;">
+                <p>בקרוב יתווספו פאוור אפים חדשים לחנות! ⚡</p>
+            </div>
+        </div>
+
+        <button class="btn btn-close" onclick="closeShop()">סגור חנות</button>
     </div>
     <canvas id="gameCanvas"></canvas>
 
@@ -88,11 +209,16 @@
         const finalWaveDisplay = document.getElementById('final-wave');
         const finalCoinsDisplay = document.getElementById('final-coins');
         const startScreen = document.getElementById('start-screen');
+        const shopModal = document.getElementById('shop-modal');
+        const shopCoinsDisplay = document.getElementById('shop-coins');
+        const buySlowmoBtn = document.getElementById('buy-slowmo-btn');
 
         let width, height;
         let player, enemies, playerLasers, enemyLasers;
         let wave = 1;
-        let coins = 0;
+        let coins = parseInt(localStorage.getItem('space_shooter_coins') || '0', 10);
+        let hasSlowmo = localStorage.getItem('space_shooter_slowmo') === 'true';
+        let shopPreviousScreen = 'menu';
         let isGameOver = false;
         let isGameStarted = false;
         let lastTime = 0;
@@ -174,8 +300,10 @@
                 this.shootCooldown -= dt;
                 // Randomly shoot
                 if (this.shootCooldown <= 0 && Math.random() < 0.02 + (this.level * 0.005)) {
-                    enemyLasers.push(new Laser(this.x + this.width / 2, this.y + this.height, 6 + this.level * 0.5, 'enemy'));
-                    this.shootCooldown = 1500 - (this.level * 80); // Min time between shots
+                    let laserSpeed = (6 + this.level * 0.5) * (hasSlowmo ? 0.8 : 1.0);
+                    enemyLasers.push(new Laser(this.x + this.width / 2, this.y + this.height, laserSpeed, 'enemy'));
+                    let baseCooldown = 1500 - (this.level * 80);
+                    this.shootCooldown = hasSlowmo ? (baseCooldown * 1.25) : baseCooldown; // 20% slower rate of fire
                 }
             }
             draw() {
@@ -258,8 +386,62 @@
                 enemies.push(new Enemy(level, i, numEnemies));
             }
         }
+        function openShop(fromScreen) {
+            shopPreviousScreen = fromScreen;
+            startScreen.style.display = 'none';
+            gameoverScreen.style.display = 'none';
+            shopModal.style.display = 'block';
+            updateShopUI();
+        }
+
+        function closeShop() {
+            shopModal.style.display = 'none';
+            if (shopPreviousScreen === 'menu') {
+                startScreen.style.display = 'block';
+            } else {
+                gameoverScreen.style.display = 'block';
+            }
+        }
+
+        function switchShopTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+            document.getElementById('tab-' + tabName + '-btn').classList.add('active');
+            document.getElementById('tab-' + tabName).style.display = 'block';
+        }
+
+        function updateShopUI() {
+            shopCoinsDisplay.innerText = coins;
+            if (hasSlowmo) {
+                buySlowmoBtn.innerText = 'נרכש ✔';
+                buySlowmoBtn.classList.add('owned');
+                buySlowmoBtn.disabled = true;
+            } else {
+                buySlowmoBtn.innerText = 'קנה (100 🪙)';
+                buySlowmoBtn.classList.remove('owned');
+                buySlowmoBtn.disabled = false;
+            }
+        }
+
+        function buyTimeSlow() {
+            if (hasSlowmo) return;
+            if (coins >= 100) {
+                coins -= 100;
+                hasSlowmo = true;
+                localStorage.setItem('space_shooter_coins', coins.toString());
+                localStorage.setItem('space_shooter_slowmo', 'true');
+                updateUI();
+                updateShopUI();
+                alert('רכשת בהצלחה את היכולת "האטת זמן"! יריות האויבים יהיו איטיות ב-20%!');
+            } else {
+                alert('אין לך מספיק מטבעות! חסרים לך ' + (100 - coins) + ' מטבעות.');
+            }
+        }
+
         function startGameFromMenu() {
             startScreen.style.display = 'none';
+            shopModal.style.display = 'none';
             isGameStarted = true;
             startGame();
         }
@@ -269,16 +451,16 @@
             playerLasers = [];
             enemyLasers = [];
             wave = 1;
-            coins = 0;
             isGameOver = false;
             gameoverScreen.style.display = 'none';
+            shopModal.style.display = 'none';
             spawnWave(wave);
             updateUI();
             lastTime = performance.now();
         }
 
         function updateUI() {
-            hpDisplay.innerText = player.hp;
+            if (player) hpDisplay.innerText = player.hp;
             waveDisplay.innerText = wave;
             coinsDisplay.innerText = coins;
         }
@@ -287,6 +469,7 @@
             isGameOver = true;
             finalWaveDisplay.innerText = wave;
             finalCoinsDisplay.innerText = coins;
+            localStorage.setItem('space_shooter_coins', coins.toString());
             gameoverScreen.style.display = 'block';
         }
 
@@ -420,6 +603,7 @@
                         hit = true;
                         if (enemy.hp <= 0) {
                             coins += enemy.level * 2;
+                            localStorage.setItem('space_shooter_coins', coins.toString());
                             enemies.splice(j, 1);
                             updateUI();
                         }
@@ -461,6 +645,7 @@
             requestAnimationFrame(gameLoop);
         }
 
+        updateUI();
         requestAnimationFrame(gameLoop);
     </script>
 </body>
