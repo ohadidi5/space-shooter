@@ -232,11 +232,19 @@
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            if(player) {
+            if (player) {
                 player.y = height - controlBarHeight - player.height - 15;
+            }
+            if (enemies && enemies.length > 0) {
+                enemies.forEach(enemy => {
+                    enemy.y = 48;
+                });
             }
         }
         window.addEventListener('resize', resize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resize, 100);
+        });
         resize();
 
         class Player {
