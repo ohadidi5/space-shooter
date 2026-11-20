@@ -31,7 +31,7 @@
             font-size: 20px;
             font-weight: bold;
         }
-        #gameover, #start-screen, #shop-modal {
+        #gameover, #start-screen {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -46,13 +46,26 @@
             max-width: 90vw;
             box-sizing: border-box;
         }
-        #gameover, #shop-modal {
+        #gameover {
             display: none;
         }
         #shop-modal {
-            width: 360px;
-            max-height: 85vh;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0d1733 0%, #030611 100%);
+            z-index: 200;
+            box-sizing: border-box;
+            padding: 20px;
             overflow-y: auto;
+            text-align: center;
+        }
+        .shop-container {
+            max-width: 500px;
+            margin: 0 auto;
         }
         .btn {
             padding: 12px 24px;
@@ -166,36 +179,38 @@
         <button class="btn btn-shop" onclick="openShop('gameover')">🛒 חנות</button>
     </div>
 
-    <!-- Shop Modal -->
+    <!-- Shop Modal (Full Screen) -->
     <div id="shop-modal">
-        <h2>🛒 חנות החלל</h2>
-        <div style="color: #ffd700; font-size: 18px; margin-bottom: 10px;">
-            המטבעות שלך: <span id="shop-coins">0</span> 🪙
-        </div>
-        
-        <div class="shop-tabs">
-            <button class="tab-btn active" id="tab-skills-btn" onclick="switchShopTab('skills')">יכולות מיוחדות</button>
-            <button class="tab-btn" id="tab-powerups-btn" onclick="switchShopTab('powerups')">פאוור אפים</button>
-        </div>
+        <div class="shop-container">
+            <h2 style="font-size: 26px; margin: 10px 0; color: #00ffff; text-shadow: 0 0 10px #00ffff;">🛒 חנות החלל</h2>
+            <div style="color: #ffd700; font-size: 20px; font-weight: bold; margin-bottom: 15px;">
+                המטבעות שלך: <span id="shop-coins">0</span> 🪙
+            </div>
+            
+            <div class="shop-tabs">
+                <button class="tab-btn active" id="tab-skills-btn" onclick="switchShopTab('skills')">יכולות מיוחדות</button>
+                <button class="tab-btn" id="tab-powerups-btn" onclick="switchShopTab('powerups')">פאוור אפים</button>
+            </div>
 
-        <div id="tab-skills" class="tab-content">
-            <div class="shop-item">
-                <h3>⏳ האטת זמן</h3>
-                <p>מאיט את מהירות הלייזרים והירייות של חלליות האויב ב-20% באופן קבוע!</p>
-                <div class="item-footer">
-                    <span class="price-tag">100 🪙</span>
-                    <button id="buy-slowmo-btn" class="btn-buy" onclick="buyTimeSlow()">קנה</button>
+            <div id="tab-skills" class="tab-content">
+                <div class="shop-item">
+                    <h3>⏳ האטת זמן</h3>
+                    <p>מאיט את מהירות הלייזרים והירייות של חלליות האויב ב-20% באופן קבוע!</p>
+                    <div class="item-footer">
+                        <span class="price-tag">100 🪙</span>
+                        <button id="buy-slowmo-btn" class="btn-buy" onclick="buyTimeSlow()">קנה</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="tab-powerups" class="tab-content" style="display: none;">
-            <div class="shop-item" style="text-align: center; color: #aaa;">
-                <p>בקרוב יתווספו פאוור אפים חדשים לחנות! ⚡</p>
+            <div id="tab-powerups" class="tab-content" style="display: none;">
+                <div class="shop-item" style="text-align: center; color: #aaa;">
+                    <p>בקרוב יתווספו פאוור אפים חדשים לחנות! ⚡</p>
+                </div>
             </div>
-        </div>
 
-        <button class="btn btn-close" onclick="closeShop()">סגור חנות</button>
+            <button class="btn btn-close" style="width: 100%; margin-top: 15px;" onclick="closeShop()">✕ סגור חנות</button>
+        </div>
     </div>
     <canvas id="gameCanvas"></canvas>
 
