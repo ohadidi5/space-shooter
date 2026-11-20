@@ -2,6 +2,9 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
     <title>מלחמת חלל</title>
     <style>
@@ -289,22 +292,31 @@
 
         // Controls
         function handleInput(x, y) {
-            if (isGameOver) return;
+            if (isGameOver || !player) return;
             player.x = x - player.width / 2;
             if (player.x < 0) player.x = 0;
             if (player.x + player.width > width) player.x = width - player.width;
         }
 
         canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             isTouching = true;
-            handleInput(e.touches[0].clientX, e.touches[0].clientY);
-        });
+            if (e.touches.length > 0) {
+                handleInput(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
         canvas.addEventListener('touchmove', (e) => {
-            handleInput(e.touches[0].clientX, e.touches[0].clientY);
-        });
-        canvas.addEventListener('touchend', () => {
+            e.preventDefault();
+            if (e.touches.length > 0) {
+                handleInput(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
             isTouching = false;
-        });
+        }, { passive: false });
         
         canvas.addEventListener('mousedown', (e) => {
             isTouching = true;
@@ -331,6 +343,52 @@
                 ctx.fillRect(Math.random()*width, Math.random()*height, 2, 2);
             }
 
+            // Draw Bottom Touch Control Bar
+            const barY = height - controlBarHeight;
+            // Background track
+            ctx.fillStyle = 'rgba(20, 25, 45, 0.9)';
+            ctx.fillRect(0, barY, width, controlBarHeight);
+
+            // Top border for the bar
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, barY);
+            ctx.lineTo(width, barY);
+            ctx.stroke();
+
+            // Center guide line
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.4)';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(30, barY + controlBarHeight / 2);
+            ctx.lineTo(width - 30, barY + controlBarHeight / 2);
+            ctx.stroke();
+
+            // Slider handle indicator matching player's X position
+            const sliderX = player ? (player.x + player.width / 2) : (width / 2);
+            const sliderY = barY + controlBarHeight / 2;
+            ctx.fillStyle = '#00ffff';
+            ctx.shadowColor = '#00ffff';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(sliderX, sliderY, 20, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0; // reset shadow
+
+            // Small inner dot for slider
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(sliderX, sliderY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Label text on the bar
+            ctx.fillStyle = '#00ffff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('◄  החלק כאן להזזה  ►', width / 2, barY + 18);
+
             if (!isGameStarted || isGameOver) {
                 requestAnimationFrame(gameLoop);
                 return;
@@ -341,53 +399,6 @@
                 playerLasers.push(new Laser(player.x + player.width / 2, player.y, -12, 'player'));
                 lastShotTime = timestamp;
             }
-
-            // Draw Bottom Touch Control Bar
-            const barY = height - controlBarHeight;
-            // Background track
-            ctx.fillStyle = 'rgba(20, 25, 45, 0.85)';
-            ctx.fillRect(0, barY, width, controlBarHeight);
-
-            // Top border for the bar
-            ctx.strokeStyle = '#00ffff';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(0, barY);
-            ctx.lineTo(width, barY);
-            ctx.stroke();
-
-            // Center guide line
-            ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(30, barY + controlBarHeight / 2);
-            ctx.lineTo(width - 30, barY + controlBarHeight / 2);
-            ctx.stroke();
-
-            // Slider handle indicator matching player's X position
-            const sliderX = player.x + player.width / 2;
-            const sliderY = barY + controlBarHeight / 2;
-            ctx.fillStyle = '#00ffff';
-            ctx.shadowColor = '#00ffff';
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.arc(sliderX, sliderY, 18, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0; // reset shadow
-
-            // Small inner dot for slider
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(sliderX, sliderY, 7, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Label text on the bar
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.font = '13px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('◄  החלק כאן להזזה  ►', width / 2, barY + 18);
-
             player.draw();
 
             for (let i = enemies.length - 1; i >= 0; i--) {
